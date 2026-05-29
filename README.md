@@ -1,97 +1,82 @@
-This is a new [**React Native**](https://reactnative.dev) project, bootstrapped using [`@react-native-community/cli`](https://github.com/react-native-community/cli).
+# Offline Facial Recognition & Liveness Detection for React Native
 
-# Getting Started
+A high-performance, offline-first biometric authentication system for React Native that performs facial recognition and anti-spoofing liveness detection entirely on-device.
 
-> **Note**: Make sure you have completed the [Set Up Your Environment](https://reactnative.dev/docs/set-up-your-environment) guide before proceeding.
+## 🚀 Overview
 
-## Step 1: Start Metro
+Secure identity verification often relies on cloud-based services, which introduce latency, privacy concerns, and fail in offline environments. This solution implements a complete biometric pipeline on the device, combining facial landmark detection, embedding extraction, and a dynamic liveness challenge-response system.
 
-First, you will need to run **Metro**, the JavaScript build tool for React Native.
+### ✨ Key Features
+- **Fully Offline Inference**: Zero dependency on external APIs for authentication.
+- **Anti-Spoofing (Liveness Detection)**: Real-time challenges (blink, smile, head turn) to prevent photo/video replay attacks.
+- **Secure Storage**: Face embeddings are encrypted at rest using AES-256 via `react-native-mmkv`.
+- **Deferred Cloud Sync**: Background synchronization layer using AWS S3 for encrypted records.
 
-To start the Metro dev server, run the following command from the root of your React Native project:
+## 🛠 Technical Stack
 
+- **Framework**: React Native (Latest Stable) + TypeScript
+- **ML Runtime**: TensorFlow Lite (`react-native-fast-tflite`)
+- **Models**:
+  - **BlazeFace/FaceMesh**: Landmark detection.
+  - **MobileFaceNet**: Quantized INT8 model for 128-d facial embeddings.
+- **Camera**: `react-native-vision-camera` (v4+)
+- **Storage**: `react-native-mmkv` (Encrypted)
+- **UI**: `react-native-reanimated`
+
+## 📐 Architecture
+
+The system follows a modular pipeline:
+`Camera Frame` $\rightarrow$ `FaceDetector` $\rightarrow$ `LivenessEngine` $\rightarrow$ `FaceEmbedder` $\rightarrow$ `FaceStore/S3`.
+
+For a deeper dive, see [ARCHITECTURE.md](./docs/ARCHITECTURE.md).
+
+---
+
+## 🏁 Getting Started
+
+### Prerequisites
+Make sure you have completed the [Set Up Your Environment](https://reactnative.dev/docs/set-up-your-environment) guide before proceeding.
+
+### Step 1: Install Dependencies
 ```sh
-# Using npm
+npm install
+# For iOS:
+cd ios && pod install && cd ..
+```
+
+### Step 2: Start Metro
+```sh
 npm start
-
-# OR using Yarn
-yarn start
 ```
 
-## Step 2: Build and run your app
+### Step 3: Build and Run
+With Metro running, use one of the following commands:
 
-With Metro running, open a new terminal window/pane from the root of your React Native project, and use one of the following commands to build and run your Android or iOS app:
-
-### Android
-
+#### Android
 ```sh
-# Using npm
 npm run android
-
-# OR using Yarn
-yarn android
 ```
 
-### iOS
-
-For iOS, remember to install CocoaPods dependencies (this only needs to be run on first clone or after updating native deps).
-
-The first time you create a new project, run the Ruby bundler to install CocoaPods itself:
-
+#### iOS
 ```sh
-bundle install
-```
-
-Then, and every time you update your native dependencies, run:
-
-```sh
-bundle exec pod install
-```
-
-For more information, please visit [CocoaPods Getting Started guide](https://guides.cocoapods.org/using/getting-started.html).
-
-```sh
-# Using npm
 npm run ios
-
-# OR using Yarn
-yarn ios
 ```
 
-If everything is set up correctly, you should see your new app running in the Android Emulator, iOS Simulator, or your connected device.
+## 📂 Project Structure
 
-This is one way to run your app — you can also build it directly from Android Studio or Xcode.
+```
+/FaceAuthSDK
+  /src
+    /models         ← TFLite models (.tflite)
+    /core           ← Core ML and Storage logic
+    /components     ← UI components
+    /hooks          ← React hooks for auth/liveness
+  /demo             ← Standalone demo app
+  /docs             ← Technical documentation
+```
 
-## Step 3: Modify your app
-
-Now that you have successfully run the app, let's make changes!
-
-Open `App.tsx` in your text editor of choice and make some changes. When you save, your app will automatically update and reflect these changes — this is powered by [Fast Refresh](https://reactnative.dev/docs/fast-refresh).
-
-When you want to forcefully reload, for example to reset the state of your app, you can perform a full reload:
-
-- **Android**: Press the <kbd>R</kbd> key twice or select **"Reload"** from the **Dev Menu**, accessed via <kbd>Ctrl</kbd> + <kbd>M</kbd> (Windows/Linux) or <kbd>Cmd ⌘</kbd> + <kbd>M</kbd> (macOS).
-- **iOS**: Press <kbd>R</kbd> in iOS Simulator.
-
-## Congratulations! :tada:
-
-You've successfully run and modified your React Native App. :partying_face:
-
-### Now what?
-
-- If you want to add this new React Native code to an existing application, check out the [Integration guide](https://reactnative.dev/docs/integration-with-existing-apps).
-- If you're curious to learn more about React Native, check out the [docs](https://reactnative.dev/docs/getting-started).
-
-# Troubleshooting
-
-If you're having issues getting the above steps to work, see the [Troubleshooting](https://reactnative.dev/docs/troubleshooting) page.
-
-# Learn More
-
-To learn more about React Native, take a look at the following resources:
-
-- [React Native Website](https://reactnative.dev) - learn more about React Native.
-- [Getting Started](https://reactnative.dev/docs/environment-setup) - an **overview** of React Native and how setup your environment.
-- [Learn the Basics](https://reactnative.dev/docs/getting-started) - a **guided tour** of the React Native **basics**.
-- [Blog](https://reactnative.dev/blog) - read the latest official React Native **Blog** posts.
-- [`@facebook/react-native`](https://github.com/facebook/react-native) - the Open Source; GitHub **repository** for React Native.
+## 📈 Performance Targets
+- **End-to-End Latency**: < 800ms.
+- **Model Footprint**: < 15MB.
+- **Recognition Accuracy**: > 95%.
+- **False Accept Rate (FAR)**: < 0.1%.
