@@ -1,7 +1,7 @@
 import { useState, useCallback } from 'react';
-import FaceStore from './FaceStore';
-import FaceEmbedder from './FaceEmbedder';
-import FaceDetector from './FaceDetector';
+import FaceStore from '../core/FaceStore';
+import FaceEmbedder from '../core/FaceEmbedder';
+import FaceDetector from '../core/FaceDetector';
 
 export const useFaceAuth = () => {
   const [isProcessing, setIsProcessing] = useState(false);

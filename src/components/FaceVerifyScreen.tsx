@@ -1,6 +1,6 @@
 import React, { useEffect, useCallback } from 'react';
 import { View, Text, TouchableOpacity, StyleSheet, Alert } from 'react-native';
-import { Camera, useCameraDevices } from 'react-native-vision-camera';
+import { Camera, useCameraDevice } from 'react-native-vision-camera';
 import { useFaceAuth } from '../hooks/useFaceAuth';
 import { useLiveness } from '../hooks/useLiveness';
 import { LivenessOverlay } from './LivenessOverlay';
@@ -8,8 +8,7 @@ import { LivenessOverlay } from './LivenessOverlay';
 export const FaceVerifyScreen = () => {
   const { verifyFace } = useFaceAuth();
   const { startCheck, challenge, isPassed, isChecking } = useLiveness();
-  const devices = useCameraDevices();
-  const device = devices.front;
+  const device = useCameraDevice('front');
 
   const handleVerify = useCallback(async () => {
     const mockTensor = new Float32Array(112 * 112 * 3);

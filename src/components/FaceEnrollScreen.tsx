@@ -1,13 +1,12 @@
 import React, { useState } from 'react';
 import { View, Text, TouchableOpacity, StyleSheet, Alert } from 'react-native';
-import { Camera, useCameraDevices } from 'react-native-vision-camera';
+import { Camera, useCameraDevice } from 'react-native-vision-camera';
 import { useFaceAuth } from '../hooks/useFaceAuth';
 
 export const FaceEnrollScreen = () => {
   const [userId] = useState('user_123');
   const { enrollFace, isProcessing } = useFaceAuth();
-  const devices = useCameraDevices();
-  const device = devices.front;
+  const device = useCameraDevice('front');
 
   const onEnroll = async () => {
     // In a real app, we'd grab the latest frame from the frame processor

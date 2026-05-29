@@ -1,7 +1,27 @@
 import NetInfo from '@react-native-community/netinfo';
 import { S3Client, PutObjectCommand } from '@aws-sdk/client-s3';
 import FaceStore, { FaceRecord } from './FaceStore';
-import { EventEmitter } from 'events';
+
+class EventEmitter {
+  private listeners: { [key: string]: Function[] } = {};
+
+  on(event: string, listener: Function) {
+    if (!this.listeners[event]) {
+      this.listeners[event] = [];
+    }
+    this.listeners[event].push(listener);
+  }
+
+  emit(event: string, ...args: any[]) {
+    if (this.listeners[event]) {
+      this.listeners[event].forEach(listener => listener(...args));
+    }
+  }
+
+  removeAllListeners() {
+    this.listeners = {};
+  }
+}
 
 class SyncManager extends EventEmitter {
   private s3Client: S3Client;

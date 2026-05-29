@@ -12,13 +12,33 @@ export interface FaceRecord {
 }
 
 class FaceStore {
-  private storage: MMKV;
+  private storage: any;
 
   constructor() {
-    this.storage = new MMKV({
-      id: 'face-auth-storage',
-      encryptionKey: 'a-very-secure-key-that-should-be-from-keystore', // In production, use react-native-keychain
-    });
+    try {
+    if (typeof MMKV === 'undefined') {
+      console.warn('MMKV is undefined. Falling back to in-memory storage.');
+      this.storage = {
+          set: (k: string, v: string) => { (this as any)._fallback = (this as any)._fallback || {}; (this as any)._fallback[k] = v; },
+          getString: (k: string) => (this as any)._fallback?.[k],
+          delete: (k: string) => { delete (this as any)._fallback?.[k]; },
+          getAllKeys: () => Object.keys((this as any)._fallback || {}),
+        };
+      } else {
+        this.storage = new MMKV({
+          id: 'face-auth-storage',
+          encryptionKey: 'a-very-secure-key-that-should-be-from-keystore',
+        });
+      }
+    } catch (e) {
+      console.error('Failed to initialize MMKV:', e);
+      this.storage = {
+        set: (k: string, v: string) => { (this as any)._fallback = (this as any)._fallback || {}; (this as any)._fallback[k] = v; },
+        getString: (k: string) => (this as any)._fallback?.[k],
+        delete: (k: string) => { delete (this as any)._fallback?.[k]; },
+        getAllKeys: () => Object.keys((this as any)._fallback || {}),
+      };
+    }
   }
 
   private serializeEmbedding(embedding: Float32Array): string {
